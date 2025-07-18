@@ -3,16 +3,16 @@ const { app, output, input } = require('@azure/functions');
 const readCosmosDB = input.cosmosDB({
     containerName: 'listserv',
     databaseName: 'listserv',
-    collectionName: 'signups',
+    collectionName: 'Items',
     id: '{Query.email}',
-    createIfNotExists: true,
+    partitionKey: '{Query.email}',
     connection: 'AzureWebJobsStorage'
 })
 
 const sendToCosmosDB = output.cosmosDB({
     containerName: 'listserv',
     databaseName: 'listserv',
-    collectionName: 'signups',
+    collectionName: 'Items',
     createIfNotExists: true,
     connection: 'AzureWebJobsStorage'
 });
@@ -36,9 +36,10 @@ app.http('Signup', {
                 return { status: 400, body: 'Email is invalid' };
             }
 
-            const body = await request.json();
+            const bodyText = await request.text();
+            context.log(`Request body: ${bodyText}`)
 
-            context.log(`Request body: ${body}`)
+            const body = JSON.parse(bodyText)
 
             let { tags } = body;
 
@@ -49,7 +50,11 @@ app.http('Signup', {
             const existing = context.extraInputs.get(readCosmosDB);
 
             if (existing) {
-                tags = [ ...existing.tags || [], tags ];
+                context.log(`Found existing record with tags ${existing.tags}. Merging...`);
+
+                tags = [ ...existing.tags || [], ...tags ];
+            } else {
+                context.log('Existing record not found')
             }
 
             context.extraOutputs.set(sendToCosmosDB, { id: email, Email: email, tags });
