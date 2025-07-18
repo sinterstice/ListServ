@@ -28,6 +28,8 @@ app.http('Signup', {
         try {
             const email = request.query.get('email');
 
+            context.log(`Signup request for email: ${email}`);
+
             const isEmail = /[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}/.test(email + ''.trim().toLowerCase());
 
             if (!isEmail) {
@@ -35,6 +37,9 @@ app.http('Signup', {
             }
 
             const body = await request.json();
+
+            context.log(`Request body: ${body}`)
+
             let { tags } = body;
 
             if (!tags || !Array.isArray(tags) || tags.some((t) => typeof t !== 'string' || t.length < 1)) {
@@ -44,14 +49,14 @@ app.http('Signup', {
             const existing = context.extraInputs.get(readCosmosDB);
 
             if (existing) {
-                tags = [ ...existing.tags, tags ];
+                tags = [ ...existing.tags || [], tags ];
             }
 
             context.extraOutputs.set(sendToCosmosDB, { id: email, Email: email, tags });
 
             return { body: `Hello, ${email}!` };
-        } catch(err) {
-            console.error(err);
+        } catch(error) {
+            context.log(error);
             return { status: 500, body: 'Internal Server Error' };
         }
 
