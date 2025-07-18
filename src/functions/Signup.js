@@ -37,8 +37,6 @@ app.http('Signup', {
             const body = await request.json();
             let { tags } = body;
 
-            console.log(tags)
-
             if (!tags || !Array.isArray(tags) || tags.some((t) => typeof t !== 'string' || t.length < 1)) {
                 return { status: 400, body: 'Tags are invalid' };
             }
