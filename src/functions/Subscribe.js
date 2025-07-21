@@ -17,7 +17,11 @@ const sendToCosmosDB = output.cosmosDB({
     connection: 'AzureWebJobsStorage'
 });
 
-app.http('Signup', {
+const getRandomSalt = () => {
+    return new Array(8).fill(0).map(() => Math.floor(Math.random() * 10)).join('');
+}
+
+app.http('Subscribe', {
     methods: ['POST'],
     authLevel: 'anonymous',
     extraInputs: [readCosmosDB],
@@ -48,18 +52,23 @@ app.http('Signup', {
             }
 
             const existing = context.extraInputs.get(readCosmosDB);
-
+            
             if (existing) {
                 context.log(`Found existing record with tags ${existing.tags}. Merging...`);
-
-                tags = [ ...existing.tags || [], ...tags ];
             } else {
-                context.log('Existing record not found')
+                context.log('Existing record not found. Adding new subscriber...')
             }
 
-            context.extraOutputs.set(sendToCosmosDB, { id: email, Email: email, tags });
+            const document = {
+                id: email,
+                email: email,
+                secret: getRandomSalt(),
+                tags: [ ...existing?.tags || [], ...tags ]
+            };
 
-            return { body: `Hello, ${email}!` };
+            context.extraOutputs.set(sendToCosmosDB, document);
+
+            return { body: `You have now subscribed!` };
         } catch(error) {
             context.log(error);
             return { status: 500, body: 'Internal Server Error' };
