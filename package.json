@@ -1,5 +1,5 @@
 {
-  "name": "",
+  "name": "ListServAzureFuncs",
   "version": "1.0.0",
   "description": "",
   "main": "src/functions/*.js",
@@ -12,6 +12,7 @@
     "azure-functions-core-tools": "^4.x"
   },
   "dependencies": {
+    "applicationinsights": "^3.7.0",
     "lodash": "^4.17.21"
   }
 }
