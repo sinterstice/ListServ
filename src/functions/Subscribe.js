@@ -5,7 +5,6 @@ const readCosmosDB = input.cosmosDB({
     databaseName: 'listserv',
     collectionName: 'Items',
     id: '{Query.email}',
-    partitionKey: '{Query.email}',
     connection: 'AzureWebJobsStorage'
 })
 
@@ -16,10 +15,6 @@ const sendToCosmosDB = output.cosmosDB({
     createIfNotExists: true,
     connection: 'AzureWebJobsStorage'
 });
-
-const getRandomSalt = () => {
-    return new Array(8).fill(0).map(() => Math.floor(Math.random() * 10)).join('');
-}
 
 app.http('Subscribe', {
     methods: ['POST'],
@@ -62,7 +57,6 @@ app.http('Subscribe', {
             const document = {
                 id: email,
                 email: email,
-                secret: getRandomSalt(),
                 tags: [ ...existing?.tags || [], ...tags ]
             };
 
