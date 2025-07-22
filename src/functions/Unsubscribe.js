@@ -17,7 +17,7 @@ const sendToCosmosDB = output.cosmosDB({
     connection: 'AzureWebJobsStorage',
 });
 
-app.http('Unsubscribe', {
+app.http('unsubscribe', {
     methods: ['POST'],
     authLevel: 'anonymous',
     extraInputs: [readCosmosDB],
