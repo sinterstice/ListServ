@@ -79,7 +79,8 @@ app.http('unsubscribe', {
 
             return { body: `You are unsubscribed!` };
         } catch(error) {
-            context.error(error);
+            context.error(error.message);
+            context.error(error.stack);
             return { status: 500, body: 'Internal Server Error' };
         }
 

@@ -63,7 +63,8 @@ app.http('subscribe', {
 
             return { body: `You have now subscribed!` };
         } catch(error) {
-            context.error(error);
+            context.error(error.message);
+            context.error(error.stack);
             return { status: 500, body: 'Internal Server Error' };
         }
 
