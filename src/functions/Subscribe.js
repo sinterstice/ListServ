@@ -59,10 +59,15 @@ app.http('subscribe', {
                 tags: [ ...existing?.tags || [], ...tags ]
             };
 
+            context.log('waht the fuck 2')
+
             context.extraOutputs.set(sendToCosmosDB, document);
+
+            context.log('waht the fuck 3')
 
             return { body: `You have now subscribed!` };
         } catch(error) {
+            context.log('What the fuckkkk');
             context.error(error.message);
             context.error(error.stack);
             return { status: 500, body: 'Internal Server Error' };
