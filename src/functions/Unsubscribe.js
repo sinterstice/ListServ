@@ -6,6 +6,7 @@ const readCosmosDB = input.cosmosDB({
     databaseName: 'listserv',
     collectionName: 'Items',
     id: '{Query.email}',
+    partitionKey: '{Query.email}',
     connection: 'CosmosDBConnection'
 })
 
