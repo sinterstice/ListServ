@@ -77,7 +77,7 @@ app.http('unsubscribe', {
                 context.extraOutputs.set(sendToCosmosDB, document);
             }
 
-            return { body: `You are unsubscribed!` };
+            return { status: 200, body: `You are unsubscribed!` };
         } catch(error) {
             context.error(error.message);
             context.error(error.stack);
