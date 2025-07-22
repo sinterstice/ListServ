@@ -5,7 +5,7 @@ const readCosmosDB = input.cosmosDB({
     databaseName: 'listserv',
     collectionName: 'Items',
     id: '{Query.email}',
-    connection: 'AzureWebJobsStorage'
+    connection: 'CosmosDBConnection'
 })
 
 const sendToCosmosDB = output.cosmosDB({
@@ -13,7 +13,7 @@ const sendToCosmosDB = output.cosmosDB({
     databaseName: 'listserv',
     collectionName: 'Items',
     createIfNotExists: true,
-    connection: 'AzureWebJobsStorage'
+    connection: 'CosmosDBConnection'
 });
 
 app.http('subscribe', {
