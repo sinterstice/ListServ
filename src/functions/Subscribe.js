@@ -1,3 +1,4 @@
+const _ = require('lodash');
 const { app, output, input } = require('@azure/functions');
 
 const readCosmosDB = input.cosmosDB({
@@ -5,6 +6,7 @@ const readCosmosDB = input.cosmosDB({
     databaseName: 'listserv',
     collectionName: 'Items',
     id: '{Query.email}',
+    partitionKey: '{Query.email}',
     connection: 'CosmosDBConnection'
 })
 
@@ -57,7 +59,7 @@ app.http('subscribe', {
             const document = {
                 id: email,
                 email,
-                tags: [ ...existing?.tags || [], ...tags ]
+                tags: _.uniq([ ...existing?.tags || [], ...tags ])
             };
 
             context.extraOutputs.set(sendToCosmosDB, document);

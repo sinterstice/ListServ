@@ -72,7 +72,7 @@ app.http('unsubscribe', {
     
                 const document = {
                     ...existing,
-                    tags: _.without(existing.tags, tags)
+                    tags: _.without(existing.tags, ...tags)
                 }
 
                 context.extraOutputs.set(sendToCosmosDB, document);
