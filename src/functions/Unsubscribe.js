@@ -1,14 +1,11 @@
 const _ = require('lodash');
 const { app, output, input } = require('@azure/functions');
 
-const { createHash } = require('node:crypto');
-
 const readCosmosDB = input.cosmosDB({
     containerName: 'listserv',
     databaseName: 'listserv',
     collectionName: 'Items',
     id: '{Query.email}',
-    partitionKey: '{Query.email}',
     connection: 'AzureWebJobsStorage'
 })
 
@@ -48,11 +45,14 @@ app.http('Unsubscribe', {
             }
 
             const bodyText = await request.text();
-            context.log(`Request body: ${bodyText}`)
+            context.log(`Request body: ${bodyText}`);
 
-            const body = JSON.parse(bodyText)
-
-            let { tags } = body;
+            let body, tags;
+            
+            if (bodyText) {
+                body = JSON.parse(bodyText);
+                ({ tags } = body);
+            }
 
             if (!tags) {
                 context.log('No tags provided, unsubscribing from all.');
@@ -71,7 +71,7 @@ app.http('Unsubscribe', {
     
                 const document = {
                     ...existing,
-                    tags: _.omit(existing.tags, tags)
+                    tags: _.without(existing.tags, tags)
                 }
 
                 context.extraOutputs.set(sendToCosmosDB, document);

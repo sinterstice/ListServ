@@ -1,5 +1,5 @@
 {
-  "name": "ListServAzureFuncs",
+  "name": "list-serv-azure-functions",
   "version": "1.0.0",
   "description": "",
   "main": "src/functions/*.js",
