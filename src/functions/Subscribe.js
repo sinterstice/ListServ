@@ -56,6 +56,7 @@ app.http('subscribe', {
 
             const document = {
                 id: email,
+                email,
                 tags: [ ...existing?.tags || [], ...tags ]
             };
 
