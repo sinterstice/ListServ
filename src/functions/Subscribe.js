@@ -25,11 +25,11 @@ app.http('subscribe', {
         context.log(`Http function processed request for url "${request.url}"`);
 
         try {
-            const email = request.query.get('email');
+            const email = (request.query.get('email') || '').trim().toLowerCase();
 
             context.log(`Signup request for email: ${email}`);
 
-            const isEmail = /[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}/.test(email + ''.trim().toLowerCase());
+            const isEmail = /[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}/.test(email);
 
             if (!isEmail) {
                 return { status: 400, body: 'Email is invalid' };
@@ -56,7 +56,6 @@ app.http('subscribe', {
 
             const document = {
                 id: email,
-                email: email,
                 tags: [ ...existing?.tags || [], ...tags ]
             };
 
@@ -64,7 +63,7 @@ app.http('subscribe', {
 
             return { body: `You have now subscribed!` };
         } catch(error) {
-            context.log(error);
+            context.error(error);
             return { status: 500, body: 'Internal Server Error' };
         }
 
