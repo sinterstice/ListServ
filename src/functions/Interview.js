@@ -1,10 +1,11 @@
 const _ = require('lodash');
+const nanoid = require('nanoid');
 const { app, output } = require('@azure/functions');
 
 const sendToCosmosDB = output.cosmosDB({
-    containerName: 'listserv',
     databaseName: 'listserv',
-    collectionName: 'Interviews',
+    containerName: 'interviews',
+    collectionName: 'Items',
     createIfNotExists: true,
     connection: 'CosmosDBConnection'
 });
@@ -38,7 +39,9 @@ app.http('interview', {
                 }
             }
 
-            const document = { email, ...fields };
+            const id = nanoid();
+
+            const document = { id, email, ...fields };
 
             context.extraOutputs.set(sendToCosmosDB, document);
 
