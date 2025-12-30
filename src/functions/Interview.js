@@ -12,6 +12,7 @@ const sendToCosmosDB = output.cosmosDB({
 app.http('interview', {
     methods: ['POST'],
     authLevel: 'anonymous',
+    extraInputs: [readCosmosDB],
     extraOutputs: [sendToCosmosDB],
     handler: async (request, context) => {
         context.log(`Http function processed request for url "${request.url}"`);
