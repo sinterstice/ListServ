@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const nanoid = require('nanoid');
+const uuid = require('uuid');
 const { app, output } = require('@azure/functions');
 
 const sendToCosmosDB = output.cosmosDB({
@@ -39,7 +39,7 @@ app.http('interview', {
                 }
             }
 
-            const id = nanoid();
+            const id = uuid.v4();
 
             const document = { id, email, ...fields };
 
