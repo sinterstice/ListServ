@@ -42,7 +42,7 @@ app.http('subscribe', {
 
             const body = JSON.parse(bodyText)
 
-            let { tags, name } = body;
+            let { tags, name, data } = body;
 
             if (!tags || !Array.isArray(tags) || tags.some((t) => typeof t !== 'string' || t.length < 1)) {
                 return { status: 400, body: 'Tags are invalid' };
