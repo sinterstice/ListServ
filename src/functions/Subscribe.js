@@ -42,10 +42,16 @@ app.http('subscribe', {
 
             const body = JSON.parse(bodyText)
 
-            let { tags } = body;
+            let { tags, name } = body;
 
             if (!tags || !Array.isArray(tags) || tags.some((t) => typeof t !== 'string' || t.length < 1)) {
                 return { status: 400, body: 'Tags are invalid' };
+            }
+
+            if (name !== undefined) {
+                if (typeof name !== 'string' || name.length < 1) {
+                    return { status: 400, body: 'Name is invalid' };
+                }
             }
 
             const existing = context.extraInputs.get(readCosmosDB);
@@ -59,7 +65,8 @@ app.http('subscribe', {
             const document = {
                 id: email,
                 email,
-                tags: _.uniq([ ...existing?.tags || [], ...tags ])
+                tags: _.uniq([ ...existing?.tags || [], ...tags ]),
+                name
             };
 
             context.extraOutputs.set(sendToCosmosDB, document);
